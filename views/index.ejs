@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager</title>
+    <link rel="stylesheet" href="/styles.css">
+    <meta name="csrf-token" content="<%= csrfToken %>">
+</head>
+<body>
+    <h1>Welcome, <%= user.username %>!</h1>
+
+    <% if (successMessage) { %>
+        <p><%= successMessage %></p>
+    <% } %>
+
+    <% if (errorMessage) { %>
+        <p><%= errorMessage %></p>
+    <% } %>
+
+    <h2>Your Tasks</h2>
+
+    <form action="/" method="GET">
+        <input type="text" name="search" placeholder="Search tasks..." value="<%= search || '' %>">
+        <select name="status">
+            <option value="">All</option>
+            <option value="pending" <%= status === 'pending' ? 'selected' : '' %>>Pending</option>
+            <option value="completed" <%= status === 'completed' ? 'selected' : '' %>>Completed</option>
+        </select>
+        <select name="sort">
+            <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest First</option>
+            <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest First</option>
+        </select>
+        <button type="submit">Filter</button>
+    </form>
+
+    <ul>
+        <% tasks.forEach(task => { %>
+            <li>
+                <%= task.title %>: <%= task.description %> - 
+                <strong><%= task.completed ? "Completed" : "Pending" %></strong>
+
+                <form action="/tasks/<%= task._id %>?_method=PUT" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <input type="hidden" name="completed" value="<%= !task.completed %>">
+                    <button type="submit">Mark as <%= task.completed ? "Pending" : "Completed" %></button>
+                </form>
+
+                <form action="/tasks/<%= task._id %>?_method=DELETE" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit">Delete</button>
+                </form>
+            </li>
+        <% }); %>
+    </ul>
+
+    <h2>Add New Task</h2>
+    <form action="/tasks" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="text" name="title" placeholder="Task Title" required>
+        <input type="text" name="description" placeholder="Task Description" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <br>
+    <a href="/auth/logout">Logout</a>
+
+</body>
+</html>
