@@ -61,11 +61,6 @@ The server should be running at: `http://localhost:3000`
 - **Database:** MongoDB Atlas
 - **Authentication:** JWT & bcrypt
 
-## License
 
-This project is licensed under the MIT License.
 
-## Contact
-
-For any issues or contributions, feel free to open an issue or reach out to **[your email or GitHub link]**.
 
